@@ -1,7 +1,7 @@
 RPi_AdafruitLCD_Menu
 ====================
 
-Demo video: http://www.youtube.com/watch?v=FZUa02CsLlg
+Demo video: http://www.youtube.com/watch?v=d60a9SgJH-w
 
 Two dimensional menu for the Adafruit RGB LCD Plate (see: http://www.adafruit.com/products/1110) on Raspberry Pi
 
