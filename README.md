@@ -13,7 +13,7 @@ For example you can show the cpu or network stats of your RPi.
 The display will automatically turn off after some seconds and, what's also nice, will stop the updating process of the current menu element to show.
 It will turn back on and show the last shown element when any button is clicked.
 
-To use this menu you will have to download the Adafruit library for the LCD display:
+To use this menu you will have to download the Adafruit library for the LCD:
 (see: https://github.com/sleeepyjack/Adafruit-Raspberry-Pi-Python-Code/tree/master/Adafruit_CharLCDPlate)
 
 For further understanding look into the testMenu.py or contact me.
