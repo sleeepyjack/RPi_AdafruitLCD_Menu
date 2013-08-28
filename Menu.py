@@ -50,6 +50,11 @@ class Menu():
             sleep(.03)
             i += 1
 
+    def returnToTopElement(self):
+        global element
+	self.sub = 0
+	self.element = self.menu[self.top]
+		
     def firstTopElement(self):
 	global element
         self.top = 0
@@ -177,6 +182,11 @@ class Menu():
         		if lcd.buttonPressed(lcd.UP):
                 		self.prevSubElement(lcd)
                			self.isOnCount = 0
+                		sleep(.3)
+			if lcd.buttonPressed(lcd.SELECT):
+                		self.returnToTopElement()
+               			self.isOnCount = 0
+				print "s"
                 		sleep(.3)
         		if self.isOnCount > 100:
                 		lcd.backlight(lcd.OFF)
