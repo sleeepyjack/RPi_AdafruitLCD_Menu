@@ -21,13 +21,13 @@ class Menu():
         return {
                 "Name"        : name,
                 "Sub"         : subList,
-				"Type"	      : type,
+		"Type"	      : type,
                 "Content"     : content}
 
     def subElement(self, name, type, content):
         return {
                 "Name"        : name,
-				"Type"        : type,
+		"Type"        : type,
                 "Content"     : content}
 	
     def buttonPressed(self, lcd):
