@@ -9,7 +9,7 @@ menu = Menu()
 
 #The menu can show strings, bash and python expressions
 
-#		topElement(Upper row Content , Type of content , Lower row content)
+#		     topElement(      Name , Type of content , Lower row content)
 
 top1 = menu.topElement("< Netzwerk     >", "STRING", "        v")
 top2 = menu.topElement("< System       >", "STRING", "        v")
