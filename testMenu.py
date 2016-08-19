@@ -1,10 +1,10 @@
 #Daniel Juenger, github.com/sleeepyjack
 
 from time import sleep
-from Adafruit_CharLCDPlate import Adafruit_CharLCDPlate
-from menu import Menu
+import Adafruit_CharLCD as LCD 
+from Menu import Menu
 
-lcd = Adafruit_CharLCDPlate()
+lcd = LCD.Adafruit_CharLCDPlate()
 menu = Menu()
 
 #The menu can show strings, bash and python expressions
@@ -21,7 +21,7 @@ sub12 = menu.subElement("Netzw.>SSID", "BASH", "iwconfig wlan0 | grep 'ESSID:' |
 sub13 = menu.subElement("Netzw.>Internet", "BASH", "ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3` > /dev/null && echo ok || echo error")
 sub21 = menu.subElement("System>CPU", "PYTHON", 'str(str(psutil.cpu_percent()) + "%")')
 sub22 = menu.subElement("System>CPU-Temp.", "STRING", "TODO")
-sub23 = menu.subElement("System>RAM", "PYTHON", 'str(str(psutil.phymem_usage()[3])+"% used")')
+sub23 = menu.subElement("System>RAM", "PYTHON", 'str(str(psutil.virtual_memory()[2])+"% used")')
 
 #Adding elements to the menu
 menu.addTopElement(top1)
@@ -37,11 +37,10 @@ menu.addSubElement(top2, sub21)
 menu.addSubElement(top2, sub22)
 menu.addSubElement(top2, sub23)
 
-color = lcd.TEAL
 
 #initializing display
 lcd.clear()
-lcd.backlight(color)
+lcd.set_color(0,1,1)
 
 #little loading animation
 i = 0
@@ -52,5 +51,5 @@ while(i < 16):
     i += 1
 
 #starting the menu
-menu.startMenu(lcd, color)
+menu.startMenu(lcd)
 

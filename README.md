@@ -17,6 +17,7 @@ The display will automatically turn off after some seconds and, what's also nice
 It will turn back on and show the last shown element when any button is clicked.
 
 To use this menu you will have to download the Adafruit library for the LCD:
-(see: https://github.com/sleeepyjack/Adafruit-Raspberry-Pi-Python-Code/tree/master/Adafruit_CharLCDPlate)
+UPDATED to support current Adafruit LCD libraries (see: https://github.com/adafruit/Adafruit_Python_CharLCD)
+
 
 For further understanding look into the testMenu.py or contact me.
