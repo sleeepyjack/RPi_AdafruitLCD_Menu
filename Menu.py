@@ -1,6 +1,6 @@
 #Daniel Juenger, github.com/sleeepyjack
 
-import Adafruit_CharLCDPlate
+import Adafruit_CharLCD as LCD
 from time import sleep
 import commands
 import psutil
@@ -34,21 +34,21 @@ class Menu():
 	
     def buttonPressed(self, lcd):
         boo = False
-        if (lcd.buttonPressed(lcd.SELECT) | lcd.buttonPressed(lcd.UP) | lcd.buttonPressed(lcd.DOWN) | lcd.buttonPressed(lcd.LEFT) | lcd.buttonPressed(lcd.RIGHT)):
+        if (lcd.is_pressed(LCD.SELECT) | lcd.is_pressed(LCD.UP) | lcd.is_pressed(LCD.DOWN) | lcd.is_pressed(LCD.LEFT) | lcd.is_pressed(LCD.RIGHT)):
             boo = True
         return boo
 
     def clearMenuRight(self, lcd):
         j = 0
         while(j < 16):
-            lcd.scrollDisplayRight()
+            lcd.move_right()
             sleep(.03)
             j += 1
 
     def clearMenuLeft(self, lcd):
         i = 0
         while(i < 16):
-            lcd.scrollDisplayLeft()
+            lcd.move_left()
             sleep(.03)
             i += 1
 
@@ -154,12 +154,12 @@ class Menu():
 	    self.scroll(lcd, msg)
 	self.count += 1
 
-    def startMenu(self, lcd, color):
+    def startMenu(self, lcd):
 	global isInterrupted
 	global isOn
 	global isOnCount
 	lcd.clear()
-	lcd.backlight(color)
+	lcd.set_color(0,1,1)
 	selfisOnCount = 0
 	self.firstTopElement()
 	self.handleMenu(lcd)
@@ -169,38 +169,38 @@ class Menu():
 	while not self.isInterrupted:
 	    try:
     		if self.isOn == True:
-        		if lcd.buttonPressed(lcd.RIGHT):
+        		if lcd.is_pressed(LCD.RIGHT):
                 		self.nextTopElement(lcd)
                 		self.isOnCount = 0
                 		sleep(.3)
-       			if lcd.buttonPressed(lcd.LEFT):
+       			if lcd.is_pressed(LCD.LEFT):
                 		self.prevTopElement(lcd)
                 		self.isOnCount = 0
                 		sleep(.3)
-        		if lcd.buttonPressed(lcd.DOWN):
+        		if lcd.is_pressed(LCD.DOWN):
                 		self.nextSubElement(lcd)
                 		self.isOnCount = 0
                 		sleep(.3)
-        		if lcd.buttonPressed(lcd.UP):
+        		if lcd.is_pressed(LCD.UP):
                 		self.prevSubElement(lcd)
                			self.isOnCount = 0
                 		sleep(.3)
-			if lcd.buttonPressed(lcd.SELECT):
+			if lcd.is_pressed(LCD.SELECT):
                 		self.returnToTopElement()
                			self.isOnCount = 0
 				print "s"
                 		sleep(.3)
         		if self.isOnCount > 100:
-                		lcd.backlight(lcd.OFF)
-                		lcd.noDisplay()
+                		lcd.set_backlight(0.0)
+                		lcd.enable_display(False)
                 		self.isOnCount = 0
                 		self.isOn = False
                 		sleep(.3)
 
     		else:
        			if self.buttonPressed(lcd):
-             	            lcd.display()
-            		    lcd.backlight(color)
+             	            lcd.enable_display(True)
+            		    lcd.set_color(0,1,1)
             		    self.isOnCount = 0
             		    self.isOn = True
            		    self.handleMenu(lcd)
@@ -212,7 +212,7 @@ class Menu():
 		self.stopMenu(lcd)
     def stopMenu(self, lcd):
 	global isInterrupted
-	lcd.backlight(lcd.OFF)
-	lcd.noDisplay()
+	lcd.set_backlight(0.0)
+	lcd.enable_display(False)
 	self.isInterrupted = True
 
