@@ -1,55 +1,61 @@
-#Daniel Juenger, github.com/sleeepyjack
+# coding=utf-8
+# Daniel Juenger, github.com/sleeepyjack
+# updated to 3.x - James L. Key
 
 from time import sleep
-import Adafruit_CharLCD as LCD 
-from Menu import Menu
+import Adafruit_CharLCD as Lcd
+from .Menu import Menu
 
-lcd = LCD.Adafruit_CharLCDPlate()
+lcd = Lcd.Adafruit_CharLCDPlate()
 menu = Menu()
 
-#The menu can show strings, bash and python expressions
+# The menu can show strings, bash and python expressions
 
-#		     topElement(      Name , Type of content , Lower row content)
+# --------- top_element(      Name , Type of content , Lower row content)
 
-top1 = menu.topElement("< Netzwerk     >", "STRING", "        v")
-top2 = menu.topElement("< System       >", "STRING", "        v")
-top3 = menu.topElement("< top3         >", "STRING", "        v")
-top4 = menu.topElement("< top4         >", "STRING", "        v")
-top5 = menu.topElement("< top5         >", "STRING", "        v")
-sub11 = menu.subElement("Netzw.>Signal", "BASH", "iwconfig wlan0 | awk -F'[ =]+' '/Signal level/ {print $7}' | cut -d/ -f1")
-sub12 = menu.subElement("Netzw.>SSID", "BASH", "iwconfig wlan0 | grep 'ESSID:' | awk '{print $4}' | sed 's/ESSID://g'")
-sub13 = menu.subElement("Netzw.>Internet", "BASH", "ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3` > /dev/null && echo ok || echo error")
-sub21 = menu.subElement("System>CPU", "PYTHON", 'str(str(psutil.cpu_percent()) + "%")')
-sub22 = menu.subElement("System>CPU-Temp.", "STRING", "TODO")
-sub23 = menu.subElement("System>RAM", "PYTHON", 'str(str(psutil.virtual_memory()[2])+"% used")')
+top1 = menu.top_element("< Network      >", "STRING", "        v")
+top2 = menu.top_element("< System       >", "STRING", "        v")
+top3 = menu.top_element("< top3         >", "STRING", "        v")
+top4 = menu.top_element("< top4         >", "STRING", "        v")
+top5 = menu.top_element("< top5         >", "STRING", "        v")
+sub11 = menu.sub_element("Net.>Signal", "BASH",
+                         "iwconfig wlan0 | awk -F'[ =]+' '/Signal level/ {print $7}' | cut -d/ -f1")
+sub12 = menu.sub_element("Net.>SSID", "BASH",
+                         "iwconfig wlan0 | grep 'ESSID:' | awk '{print $4}' | sed 's/ESSID://g'")
+sub13 = menu.sub_element("Net.>Internet", "BASH",
+                         "ping -q -w 1 -c 1 `ip r | grep default | cut -d ' ' -f 3` > /dev/null && echo ok || echo error")
+sub21 = menu.sub_element("System>CPU", "PYTHON3",
+                         'str(str(psutil.cpu_percent()) + "%")')
+sub22 = menu.sub_element("System>CPU-Temp.", "STRING", "TODO")
+sub23 = menu.sub_element("System>RAM", "PYTHON3",
+                         'str(str(psutil.virtual_memory()[2])+"% used")')
 
-#Adding elements to the menu
-menu.addTopElement(top1)
-menu.addTopElement(top2)
-menu.addTopElement(top3)
-menu.addTopElement(top4)
-menu.addTopElement(top5)
+# Adding elements to the menu
+menu.add_top_element(top1)
+menu.add_top_element(top2)
+menu.add_top_element(top3)
+menu.add_top_element(top4)
+menu.add_top_element(top5)
 
-menu.addSubElement(top1, sub11)
-menu.addSubElement(top1, sub12)
-menu.addSubElement(top1, sub13)
-menu.addSubElement(top2, sub21)
-menu.addSubElement(top2, sub22)
-menu.addSubElement(top2, sub23)
+menu.add_sub_element(top1, sub11)
+menu.add_sub_element(top1, sub12)
+menu.add_sub_element(top1, sub13)
+menu.add_sub_element(top2, sub21)
+menu.add_sub_element(top2, sub22)
+menu.add_sub_element(top2, sub23)
 
 
-#initializing display
+# initializing display
 lcd.clear()
-lcd.set_color(0,1,1)
+lcd.set_color(0, 1, 1)
 
-#little loading animation
+# little loading animation
 i = 0
 lcd.message("LOADING\n")
-while(i < 16):
+while i < 16:
     lcd.message(chr(219))
     sleep(.1)
     i += 1
 
-#starting the menu
-menu.startMenu(lcd)
-
+# starting the menu
+menu.start_menu(lcd)
