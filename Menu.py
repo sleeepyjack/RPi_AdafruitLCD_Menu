@@ -1,11 +1,13 @@
-#Daniel Juenger, github.com/sleeepyjack
+# coding=utf-8
+# Daniel Juenger, github.com/sleeepyjack
+# updated to 3.x - James L. Key
 
-import Adafruit_CharLCD as LCD
+import subprocess
 from time import sleep
-import commands
-import psutil
+import Adafruit_CharLCD as Lcd
 
-class Menu():
+
+class Menu:
     menu = list()
     top = 0
     sub = 0
@@ -15,204 +17,269 @@ class Menu():
     isOn = True
     isOnCount = 0
     stepScroll = 0
-	
-    def topElement(self, name, type, content):
-        subList = list()
-	sEl = self.subElement(name,type,content)
-	subList.append(sEl)
-        return {
-                "Name"        : name,
-                "Sub"         : subList,
-		"Type"	      : type,
-                "Content"     : content}
 
-    def subElement(self, name, type, content):
+    def top_element(self, name, element_type, content):
+        """
+        :param name: 
+        :param element_type: 
+        :param content: 
+        :return List {Name: Sub: Element_type: Content}: 
+        """
+        sublist = list()
+        subelement = self.sub_element(name, element_type, content)
+        sublist.append(subelement)
         return {
-                "Name"        : name,
-		"Type"        : type,
-                "Content"     : content}
-	
-    def buttonPressed(self, lcd):
+            "Name": name,
+            "Sub": sublist,
+            "Type": element_type,
+            "Content": content}
+
+    @staticmethod
+    def sub_element(name, element_type, content):
+        """
+        :param name: 
+        :param element_type: 
+        :param content: 
+        :return: List {Name: Element_type: Content}: 
+        """
+        return {
+            "Name": name,
+            "Type": element_type,
+            "Content": content}
+
+    @staticmethod
+    def button_pressed(lcd):
+        """
+        :param lcd: 
+        :return:  Button Presses Boolean
+        """
         boo = False
-        if (lcd.is_pressed(LCD.SELECT) | lcd.is_pressed(LCD.UP) | lcd.is_pressed(LCD.DOWN) | lcd.is_pressed(LCD.LEFT) | lcd.is_pressed(LCD.RIGHT)):
+        if (lcd.is_pressed(Lcd.SELECT) | lcd.is_pressed(Lcd.UP) | lcd.is_pressed(Lcd.DOWN) | lcd.is_pressed(
+                Lcd.LEFT) | lcd.is_pressed(Lcd.RIGHT)):
             boo = True
         return boo
 
-    def clearMenuRight(self, lcd):
+    @staticmethod
+    def clear_menu_right(lcd):
+        """
+        :param lcd: 
+        """
         j = 0
-        while(j < 16):
+        while j < 16:
             lcd.move_right()
             sleep(.03)
             j += 1
 
-    def clearMenuLeft(self, lcd):
+    @staticmethod
+    def clear_menu_left(lcd):
+        """
+        :param lcd: 
+        """
         i = 0
-        while(i < 16):
+        while i < 16:
             lcd.move_left()
             sleep(.03)
             i += 1
 
-    def returnToTopElement(self):
+    def return_to_top_element(self):
         global element
-	self.sub = 0
-	self.element = self.menu[self.top]
-		
-    def firstTopElement(self):
-	global element
+        self.sub = 0
+        self.element = self.menu[self.top]
+
+    def first_top_element(self):
+        """
+        :return: Element 
+        """
+        global element
         self.top = 0
         self.sub = 0
-	self.element = self.menu[self.top]
+        self.element = self.menu[self.top]
         return self.element
 
-    def addTopElement(self, topEl):
-        if not topEl in self.menu:
-            self.menu.append(topEl)
+    def add_top_element(self, top_element):
+        """
+        :param top_element: 
+        """
+        if top_element not in self.menu:
+            self.menu.append(top_element)
 
-    def addSubElement(self, topEl, subEl):
-        if not subEl in topEl["Sub"]:
-            topEl["Sub"].append(subEl)
+    @staticmethod
+    def add_sub_element(top_element, sub_element):
+        """
+        :param top_element: 
+        :param sub_element: 
+        """
+        if sub_element not in top_element["Sub"]:
+            top_element["Sub"].append(sub_element)
 
-    def returnElement():
-	global element
-	return self.element
+    def return_element(self):
+        """
+        :return: Element
+        """
+        global element
+        return self.element
 
     def scroll(self, lcd, msg):
-	global count
-	global stepScroll
+        """
+        :param lcd: 
+        :param msg: 
+        """
+        global count
+        global stepScroll
         if len(msg) > 16:
-	    self.stepScroll = len(msg) - 16
-	    if self.count <= 10 & self.stepScroll <= 0:
-		lcd.scrollDisplayLeft()
-		self.stepScroll -= 1
-	    if self.count > 10:
-		print "la"		
-		    
+            self.stepScroll = len(msg) - 16
+            if self.count <= 10 & self.stepScroll <= 0:
+                lcd.scrollDisplayLeft()
+                self.stepScroll -= 1
+            if self.count > 10:
+                print("la")
 
-    def nextTopElement(self, lcd):
-	global element
-	global count
-	self.clearMenuLeft(lcd)
-	self.count = 1000
+    def next_top_element(self, lcd):
+        """
+        :param lcd: 
+        """
+        global element
+        global count
+        self.clear_menu_left(lcd)
+        self.count = 1000
         if len(self.menu) > 0:
             self.top = (self.top + 1) % len(self.menu)
             self.sub = 0
-	    self.element = self.menu[self.top]
-	self.handleMenu(lcd)
+            self.element = self.menu[self.top]
+        self.handle_menu(lcd)
 
-    def prevTopElement(self, lcd):
-	global element
-	global count
-	self.clearMenuRight(lcd)
-	self.count = 1000
+    def prev_top_element(self, lcd):
+        """
+        :param lcd: 
+        """
+        global element
+        global count
+        self.clear_menu_right(lcd)
+        self.count = 1000
         if len(self.menu) > 0:
             self.top -= 1
-            self.sub  = 0
+            self.sub = 0
             if self.top < 0:
-                self.top = len(self.menu)-1
-	    self.element = self.menu[self.top]
-	self.handleMenu(lcd)
+                self.top = len(self.menu) - 1
+            self.element = self.menu[self.top]
+        self.handle_menu(lcd)
 
-    def nextSubElement(self, lcd):
-	global element
-	global count
-        topEl = self.menu[self.top]
-	self.count = 1000
-        if (len(topEl["Sub"]) > 0):
+    def next_sub_element(self, lcd):
+        """
+        :param lcd: 
+        """
+        global element
+        global count
+        top_el = self.menu[self.top]
+        self.count = 1000
+        if len(top_el["Sub"]) > 0:
             self.sub += 1
-            if (self.sub >= len(topEl["Sub"])):
+            if self.sub >= len(top_el["Sub"]):
                 self.sub = 0
-            self.element = topEl["Sub"][self.sub]
-	self.handleMenu(lcd)
+            self.element = top_el["Sub"][self.sub]
+        self.handle_menu(lcd)
 
-    def prevSubElement(self, lcd):
-	global element
-	global count
-        topEl = self.menu[self.top]
-	self.count = 1000
-        if (len(topEl["Sub"]) > 0):
+    def prev_sub_element(self, lcd):
+        """
+        :param lcd: 
+        """
+        global element
+        global count
+        top_el = self.menu[self.top]
+        self.count = 1000
+        if len(top_el["Sub"]) > 0:
             self.sub -= 1
-            if (self.sub  < 0):
-                self.sub = len(topEl["Sub"])-1
-            self.element = topEl["Sub"][self.sub]
-	self.handleMenu(lcd)
+            if self.sub < 0:
+                self.sub = len(top_el["Sub"]) - 1
+            self.element = top_el["Sub"][self.sub]
+        self.handle_menu(lcd)
 
-    def handleMenu(self,lcd):
-	global element
-	global count
-	global isOn
-	msg = ""
-	if (self.count > 10) & self.isOn:
-	    if self.element["Type"] == "STRING":
-	        msg = self.element["Content"]
-	    elif self.element["Type"] == "PYTHON":
-		msg = str(eval(self.element["Content"]))
-	    elif self.element["Type"] == "BASH":
-	        msg = commands.getoutput(self.element["Content"])
-	    self.count = 0
-	    lcd.clear()
-	    lcd.message(self.element["Name"]+"\n"+msg)
-	    self.scroll(lcd, msg)
-	self.count += 1
+    def handle_menu(self, lcd):
+        """
+        :param lcd: 
+        """
+        global element
+        global count
+        global isOn
+        msg = ""
+        if (self.count > 10) & self.isOn:
+            if self.element["Type"] == "STRING":
+                msg = self.element["Content"]
+            elif self.element["Type"] == "PYTHON":
+                msg = str(eval(self.element["Content"]))
+            elif self.element["Type"] == "BASH":
+                msg = subprocess.getoutput(self.element["Content"])
+            self.count = 0
+            lcd.clear()
+            lcd.message(self.element["Name"] + "\n" + msg)
+            self.scroll(lcd, msg)
+        self.count += 1
 
-    def startMenu(self, lcd):
-	global isInterrupted
-	global isOn
-	global isOnCount
-	lcd.clear()
-	lcd.set_color(0,1,1)
-	selfisOnCount = 0
-	self.firstTopElement()
-	self.handleMenu(lcd)
-	self.isOn = True
-	self.isOnCount = 0
-	self.isInterrupted = False
-	while not self.isInterrupted:
-	    try:
-    		if self.isOn == True:
-        		if lcd.is_pressed(LCD.RIGHT):
-                		self.nextTopElement(lcd)
-                		self.isOnCount = 0
-                		sleep(.3)
-       			if lcd.is_pressed(LCD.LEFT):
-                		self.prevTopElement(lcd)
-                		self.isOnCount = 0
-                		sleep(.3)
-        		if lcd.is_pressed(LCD.DOWN):
-                		self.nextSubElement(lcd)
-                		self.isOnCount = 0
-                		sleep(.3)
-        		if lcd.is_pressed(LCD.UP):
-                		self.prevSubElement(lcd)
-               			self.isOnCount = 0
-                		sleep(.3)
-			if lcd.is_pressed(LCD.SELECT):
-                		self.returnToTopElement()
-               			self.isOnCount = 0
-				print "s"
-                		sleep(.3)
-        		if self.isOnCount > 100:
-                		lcd.set_backlight(0.0)
-                		lcd.enable_display(False)
-                		self.isOnCount = 0
-                		self.isOn = False
-                		sleep(.3)
+    def start_menu(self, lcd):
+        """
+        :param lcd: 
+        """
+        global isInterrupted
+        global isOn
+        global isOnCount
+        lcd.clear()
+        lcd.set_color(0, 1, 1)
+        self.isOnCount = 0
+        self.first_top_element()
+        self.handle_menu(lcd)
+        self.isOn = True
+        self.isOnCount = 0
+        self.isInterrupted = False
+        while not self.isInterrupted:
+            try:
+                if self.isOn:
+                    if lcd.is_pressed(Lcd.RIGHT):
+                        self.next_top_element(lcd)
+                        self.isOnCount = 0
+                        sleep(.3)
+                    if lcd.is_pressed(Lcd.LEFT):
+                        self.prev_top_element(lcd)
+                        self.isOnCount = 0
+                        sleep(.3)
+                    if lcd.is_pressed(Lcd.DOWN):
+                        self.next_sub_element(lcd)
+                        self.isOnCount = 0
+                        sleep(.3)
+                    if lcd.is_pressed(Lcd.UP):
+                        self.prev_sub_element(lcd)
+                        self.isOnCount = 0
+                        sleep(.3)
+                    if lcd.is_pressed(Lcd.SELECT):
+                        self.return_to_top_element()
+                        self.isOnCount = 0
+                        print("s")
+                        sleep(.3)
+                    if self.isOnCount > 100:
+                        lcd.set_backlight(0.0)
+                        lcd.enable_display(False)
+                        self.isOnCount = 0
+                        self.isOn = False
+                        sleep(.3)
 
-    		else:
-       			if self.buttonPressed(lcd):
-             	            lcd.enable_display(True)
-            		    lcd.set_color(0,1,1)
-            		    self.isOnCount = 0
-            		    self.isOn = True
-           		    self.handleMenu(lcd)
-            		    sleep(.3)
-    		self.handleMenu(lcd)
-    		sleep(.1)
-    		self.isOnCount += 1
-	    except KeyboardInterrupt:
-		self.stopMenu(lcd)
-    def stopMenu(self, lcd):
-	global isInterrupted
-	lcd.set_backlight(0.0)
-	lcd.enable_display(False)
-	self.isInterrupted = True
+                else:
+                    if self.button_pressed(lcd):
+                        lcd.enable_display(True)
+                        lcd.set_color(0, 1, 1)
+                        self.isOnCount = 0
+                        self.isOn = True
+                        self.handle_menu(lcd)
+                        sleep(.3)
+                self.handle_menu(lcd)
+                sleep(.1)
+                self.isOnCount += 1
+            except KeyboardInterrupt:
+                self.stop_menu(lcd)
 
+    def stop_menu(self, lcd):
+        """
+        :param lcd: 
+        """
+        global isInterrupted
+        lcd.set_backlight(0.0)
+        lcd.enable_display(False)
+        self.isInterrupted = True
