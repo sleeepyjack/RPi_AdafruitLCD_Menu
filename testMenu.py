@@ -4,7 +4,7 @@
 
 from time import sleep
 import Adafruit_CharLCD as Lcd
-from .Menu import Menu
+from Menu import Menu
 
 lcd = Lcd.Adafruit_CharLCDPlate()
 menu = Menu()
